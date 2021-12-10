@@ -9,6 +9,8 @@ app.secret_key = "PREMBHAV007"   #used For protecting the User with Session
 app.permanent_session_lifetime = timedelta(minutes=5)
 db = SQLAlchemy(app)
 
+
+
 class User(db.Model):
     u_id = db.Column(db.Integer,primary_key = True)
     name = db.Column(db.String(20),nullable = False)
@@ -76,9 +78,10 @@ def Home():
                     users = User.query.paginate(page = page, per_page = 3)
                     return render_template('OA/home.html',users = users, user_name =session["user"] )
             except:
+                flash("User is Succefully Loggedin")
                 return render_template('OA/home.html',user_name = session["user"])
     except:
-        flash("User is Not Registered")
+        flash("Please Login First")
         return redirect('/OA/Registration/')
 
 @app.route('/OA/Users/', methods = ['GET'])
@@ -90,8 +93,11 @@ def Users():
 @app.route('/OA/Logout/', methods = ['GET', 'POST'])
 def Logout():
     session.pop("user")
-    session.pop("user_list")
-    flash('User Successfully LogedOut')
+    try:
+        session.pop("user_list")
+    except:
+        pass
+    flash('User Successfully LoggedOut')
     return redirect('/OA/Login/')
 
 
